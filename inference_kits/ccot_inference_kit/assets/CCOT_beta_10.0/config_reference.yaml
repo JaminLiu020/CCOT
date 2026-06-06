@@ -1,0 +1,37 @@
+# CCOT推理配置（精简版）
+# 此文件仅供参考，所有关键参数已在ccot_wrapper.py中硬编码
+
+model:
+  # 网络架构参数（从best_model.pt自动推断）
+  input_dim: 977                    # 基因数（自动推断）
+  input_dim_label: 32               # SMILES嵌入维度（自动推断）
+  hidden_units: [64, 64, 64, 64]    # 隐藏层（自动推断）
+  latent_dim: 50                    # 潜在维度（自动推断）
+  
+  # SMILES嵌入配置
+  embedding:
+    type: smiles
+    dim: 32
+    path: assets/rdkit2D_embedding_lincs_trapnell_chemCPA.parquet
+  
+  # Classifier-free guidance配置
+  classifier_free_guidance:
+    beta: 10.0                      # 可在初始化时覆盖
+  
+  # 自适应质量传输（已移除，alpha=0.0时不使用）
+  adaptive_mass_transport:
+    alpha: 0.0
+    sigma: 0.0
+  
+  # PICNN网络配置
+  softplus_wz_kernels: false
+  g:
+    fnorm_penalty: 1
+  f:
+    fnorm_penalty: 0
+
+# 推理设备
+device: cuda:0                      # 可在初始化时覆盖
+
+# 模型权重路径
+model_path: assets/CCOT_beta_10.0/best_model.pt    # 可在初始化时覆盖

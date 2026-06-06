@@ -1,0 +1,71 @@
+# CellOT推理配置（beta=0无条件模型）
+# 此配置对应训练时使用cell_type embedding的beta=0模型
+# 由于beta=0，推理时不需要条件输入，embedding维度不影响结果
+
+model:
+  # 网络架构参数（从best_model.pt自动推断）
+  input_dim: 977                    # 基因数（自动推断）
+  input_dim_label: 3                # cell_type嵌入维度（A549/K562/MCF7，自动推断）
+  hidden_units: [64, 64, 64, 64]    # 隐藏层（自动推断）
+  latent_dim: 50                    # 潜在维度（已弃用，保持兼容）
+  
+  # cell_type嵌入配置（训练时使用，推理时忽略）
+  embedding:
+    type: cell_type                 # 训练时使用的embedding类型
+    dim: 3                          # cell_type维度：A549(0), K562(1), MCF7(2)
+    # 注意：beta=0时此配置不影响推理
+  
+  # Classifier-free guidance配置
+  classifier_free_guidance:
+    beta: 0.0                       # 无条件推理模式
+    # beta=0: 完全忽略条件输入，只使用wx和wz层
+    # beta>0: 需要真实的条件嵌入
+  
+  # 自适应质量传输（未使用）
+  adaptive_mass_transport:
+    alpha: 0.0
+    sigma: 0.0
+  
+  # PICNN网络配置
+  softplus_wz_kernels: false
+  g:
+    fnorm_penalty: 1
+  f:
+    fnorm_penalty: 0
+
+# 训练信息（参考）
+training:
+  final_step: 1700                  # 训练到的步数
+  best_mmd: 0.063637                # 最佳MMD值
+  split_key: split_ood_finetuning   # 数据集分割方式
+  align_by_cell_type: true          # 按细胞类型对齐
+
+# 推理设备
+device: cuda:0                      # 可在初始化时覆盖
+
+# 模型权重路径
+model_path: assets/CellOT/best_model.pt    # 可在初始化时覆盖
+
+# 使用说明
+# ==============================================================================
+# 由于此模型的beta=0.0，推理时：
+# 1. 条件输入完全不被使用
+# 2. 不需要提供smiles_indices或cell_type标签
+# 3. 可以跳过embedding加载（skip_embedding=True）
+# 4. 模型只学习从control到treated的无条件映射
+# 
+# 初始化示例：
+#   wrapper = CCOTInferenceWrapper(
+#       model_path='assets/CellOT/best_model.pt',
+#       beta=0.0,
+#       device='cuda:0',
+#       skip_embedding=True  # 跳过embedding加载
+#   )
+# 
+# 推理示例：
+#   transported = wrapper.transport(
+#       source_data=control_cells,  # [N, 977]
+#       smiles_indices=None,        # beta=0时不需要
+#       return_numpy=True
+#   )
+# ==============================================================================
