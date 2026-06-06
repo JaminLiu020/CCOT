@@ -33,7 +33,7 @@ fixed:
   # dataset.data_params.split_key: split_ood_multi_task
   dataset.data_params.split_key: split_ood_finetuning             # default random_split or split_ood_finetuning
 
-  model.pretrained_model_path: notebooks/evaluate_chemCPA
+  model.pretrained_model_path: notebooks/evaluate_chemCPA/artifacts
   model.pretrained_model_hashes:
     rdkit: manual_2025-03-08_03-24-40
   model.additional_params.patience: 50 # patience for early stopping. Effective epochs: patience * checkpoint_freq.

@@ -12,7 +12,7 @@ if __name__ == "__main__":
     exp = ExperimentWrapper(init_all=False)
 
     # this is how seml loads the config file internally
-    yaml_path = "manual_run.yaml"
+    yaml_path = Path(__file__).with_name("manual_run.yaml")
     assert Path(yaml_path).exists(), "config file not found"
     seml_config, slurm_config, experiment_config = read_config(yaml_path)
     # we take the first config generated
@@ -43,6 +43,7 @@ if __name__ == "__main__":
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     file_name = f"manual_{timestamp}.pt"
-    # 保存为 YAML 文件
-    with open(args["training"]['save_dir']+f"configs_{file_name}.yaml", "w") as f:
-        yaml.dump(args, f, default_flow_style=False)  # default_flow_style=False 用于美化输出
+    config_output = Path(args["training"]["save_dir"]) / f"configs_{file_name}.yaml"
+    config_output.parent.mkdir(parents=True, exist_ok=True)
+    with open(config_output, "w") as f:
+        yaml.dump(args, f, default_flow_style=False)
