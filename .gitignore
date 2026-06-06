@@ -1,31 +1,28 @@
-# mac
+# OS and editors
 .DS_Store
+.idea/
+.vscode/
 
 # environments
 .env
 .envrc
-.venv
+.venv/
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-tmp/
 
-# jupyter notebook
-.ipynb_checkpoints
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
 
-# local analysis artifacts
-embeddings/
-notebooks/classifier/
-notebooks/evaluate_chemCPA/*.pt
-scripts/synthetic_transport_map.svg
-mutil_gpu.py
-*_backup.py
+# notebooks
+.ipynb_checkpoints/
 
 # packaging
 .Python
-.idea/
 build/
 develop-eggs/
 dist/
@@ -45,23 +42,22 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# byte-compiled
-__pycache__/
-*.py[cod]
-*$py.class
-
-# results
-*result*
+# local data and experiment outputs
 logs/
-*.csv
-
-# datasets
-datasets
-
-# other
-tmp_*
+results/
 tmp/
+tmp_*/
+embeddings/
+datasets/chemCPA
+datasets/condot
+old_result
+notebooks/classifier/
+notebooks/evaluate_chemCPA/artifacts/
+scripts/visualization_results/
+
+# local ad-hoc files
+mutil_gpu.py
+*_backup.py
 baselines/
 lsf*
 .numbers
-.vscode

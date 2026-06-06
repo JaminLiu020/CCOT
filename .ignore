@@ -1,10 +1,17 @@
 # Local generated artifacts
 embeddings/
+logs/
+results/
+tmp/
+datasets/chemCPA
+datasets/condot
+old_result
 notebooks/classifier/
-notebooks/evaluate_chemCPA/*.pt
-scripts/synthetic_transport_map.svg
+notebooks/evaluate_chemCPA/artifacts/
+scripts/visualization_results/
 mutil_gpu.py
 *_backup.py
 
-# Notebook checkpoints
-.ipynb_checkpoints
+# Python and notebook caches
+__pycache__/
+.ipynb_checkpoints/
