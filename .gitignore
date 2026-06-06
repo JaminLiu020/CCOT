@@ -54,6 +54,11 @@ old_result
 notebooks/classifier/
 notebooks/evaluate_chemCPA/artifacts/
 scripts/visualization_results/
+assets/template.tex
+inference_kits/ccot_inference_kit/assets/**/*.pt
+inference_kits/ccot_inference_kit/assets/**/*.parquet
+inference_kits/chemCPA_inference_kit/pretrained/*.pt
+inference_kits/chemCPA_inference_kit/pretrained/*.parquet
 
 # local ad-hoc files
 mutil_gpu.py
