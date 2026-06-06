@@ -1,0 +1,10 @@
+# Local generated artifacts
+embeddings/
+notebooks/classifier/
+notebooks/evaluate_chemCPA/*.pt
+scripts/synthetic_transport_map.svg
+mutil_gpu.py
+*_backup.py
+
+# Notebook checkpoints
+.ipynb_checkpoints

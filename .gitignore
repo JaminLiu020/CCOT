@@ -10,9 +10,18 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+tmp/
 
 # jupyter notebook
 .ipynb_checkpoints
+
+# local analysis artifacts
+embeddings/
+notebooks/classifier/
+notebooks/evaluate_chemCPA/*.pt
+scripts/synthetic_transport_map.svg
+mutil_gpu.py
+*_backup.py
 
 # packaging
 .Python
@@ -42,7 +51,7 @@ __pycache__/
 *$py.class
 
 # results
-results
+*result*
 logs/
 *.csv
 
