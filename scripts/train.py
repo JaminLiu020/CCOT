@@ -11,6 +11,7 @@ from collections import namedtuple
 import condot.train
 from condot.train.experiment import prepare
 from condot.utils.helpers import symlink_to_logfile, write_metadata
+from ccot.utils.optuna import run_hyperparameter_search
 
 
 Pair = namedtuple("Pair", "source target")
@@ -37,7 +38,7 @@ def main(argv):
 
     # if embedding not one-hot encoding and no combinator is selected
     # filter out combinations of perturbations
-    if isinstance(config.data.target, list):
+    if 'target' in config.data and isinstance(config.data.target, list):
         if config.model.embedding.type != "onehot" and (
           "combinator" not in config.model or not config.model.combinator):
             conditions = config.data.target
@@ -62,8 +63,8 @@ def main(argv):
     cachedir.mkdir(exist_ok=True)
 
     if FLAGS.restart:
-        (cachedir / "model.pt").unlink(missing_ok=True)
-        (cachedir / "scalars").unlink(missing_ok=True)
+        (cachedir / "best_model.pt").unlink(missing_ok=True)
+        (outdir / "log").unlink(missing_ok=True)
 
     if config.model.name == "condot":
         train = condot.train.train_condot
@@ -85,7 +86,7 @@ def main(argv):
     status.write_text("running")
 
     try:
-        train(outdir, config)
+        train(outdir, config) if 'optuna' not in config else run_hyperparameter_search(config, outdir, train)
     except ValueError as error:
         status.write_text("bugged")
         print("Training bugged")

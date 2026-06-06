@@ -1,0 +1,7 @@
+model:
+  embedding:
+    dosers_width: 64
+    dosers_depth: 3
+    embedding_encoder_width: 128
+    embedding_encoder_depth: 4
+    dim: 50 # 同 condot.yaml中的latent dim

@@ -113,45 +113,63 @@ class PICNN(nn.Module):
                 kernel_init_fxn(layer.weight)
                 nn.init.zeros_(layer.bias)
 
-    def forward(self, x, y):
-        # get label (combination) embedding
-        if self.combinator:
-            y = self.combinator(y)
-        elif self.embedding and not self.combinator:
-            y = self.embedding.forward(y)
-        elif not self.embedding and not self.combinator:
-            y = y
-        else:
-            raise ValueError
+    def forward(self, x, y, enable_conditional_generation=True):
 
-        if y.ndim == 1:
-            y = y.repeat(x.size(dim=0), 1)
-
-        if self.neural_embedding:
-            y = nn.Sigmoid()(self.we(y))
-
-        u = y
-
-        for i in range(self.n_layers):
-            u = self.sigma(0.2)(self.w[i](u))
-            if i == 0:
-                z = self.sigma(0.2)(self.wx[i](torch.mul(x, self.wxu[i](u))) + self.wu[i](u))
-                z = z * z
+        if enable_conditional_generation:
+            # get label (combination) embedding
+            if self.combinator:
+                y = self.combinator(y)
+            elif self.embedding and not self.combinator:
+                y = self.embedding.forward(y)
+            elif not self.embedding and not self.combinator:
+                y = y
             else:
-                z = self.sigma(0.2)(
-                    self.wz[i - 1](torch.mul(z, nn.functional.softplus(self.wzu[i - 1](u))))
-                    + self.wx[i](torch.mul(x, self.wxu[i](u))) + self.wu[i](u)
-                  )
+                raise ValueError
 
-        z = (self.wz[-1](torch.mul(z, nn.functional.softplus(self.wzu[-1](u))))
-             + self.wx[-1](torch.mul(x, self.wxu[-1](u))) + self.wu[-1](u))
-        return z
+            if y.ndim == 1:
+                # y = y.repeat(x.size(dim=0), 1)
+                y = y.reshape(-1, 1)
 
-    def transport(self, x, y):
+            if self.neural_embedding:
+                y = nn.Sigmoid()(self.we(y))
+
+            u = y
+
+            for i in range(self.n_layers):
+                u = self.sigma(0.2)(self.w[i](u))
+                if i == 0:
+                    z = self.sigma(0.2)(self.wx[i](torch.mul(x, self.wxu[i](u))) + self.wu[i](u))
+                    z = z * z
+                else:
+                    z = self.sigma(0.2)(
+                        self.wz[i - 1](torch.mul(z, nn.functional.softplus(self.wzu[i - 1](u))))
+                        + self.wx[i](torch.mul(x, self.wxu[i](u))) + self.wu[i](u)
+                      )
+
+            z = (self.wz[-1](torch.mul(z, nn.functional.softplus(self.wzu[-1](u))))
+                 + self.wx[-1](torch.mul(x, self.wxu[-1](u))) + self.wu[-1](u))
+            return z
+
+        else:
+            for i in range(self.n_layers):
+                if i == 0:
+                    z = self.sigma(0.2)(self.wx[i](x))
+                    z = z * z
+                else:
+                    z = self.sigma(0.2)(
+                        self.wz[i - 1](z)
+                        + self.wx[i](x)
+                    )
+
+            z = self.wz[-1](z) + self.wx[-1](x)
+            return z
+
+
+    def transport(self, x, y, is_conditional_generation=True):
         assert x.requires_grad
 
         (output,) = autograd.grad(
-            self.forward(x, y),
+            self.forward(x, y, is_conditional_generation),
             x,
             create_graph=True,
             only_inputs=True,

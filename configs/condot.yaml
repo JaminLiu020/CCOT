@@ -1,6 +1,6 @@
 model:
   name: condot
-  hidden_units: [64, 64, 64, 64]
+  hidden_units: [64, 64, 64, 64]      # default: [64, 64, 64, 64]
   latent_dim: 50
   softplus_wz_kernels: false
 
@@ -11,16 +11,35 @@ model:
     b: 0.1
     name: uniform
 
+  classifier_free_guidance:
+    beta: 1.0   # 当beta=1.0时，移除classifier_free_guidance
+
+  adaptive_mass_transport:
+    alpha: 0.0    # 当alpha=0.0时，移除转换矩阵
+    sigma: 0.0    # 当sigma=0.0时，移除损失函数正则项
+    path: notebooks/classifier/classifier_weight_matrix_sciplex_lincs_genes.pth
+
 optim:
   optimizer: Adam
   lr: 0.0001
   beta1: 0.5
   beta2: 0.9
   weight_decay: 0
+#  emb:
+#    lr:
+#      type: loguniform
+#      min: 1e-4       # default: 1e-4
+#      max: 1e-2        # default: 1e-2
+#    weight_decay:
+#      type: loguniform
+#      min: 1e-8
+#      max: 1e-5
+
 
 training:
-  n_iters: 100000
+  n_iters: 100001
   n_inner_iters: 10
-  cache_freq: 1000
-  eval_freq: 250
+  cache_freq: 500
+  eval_freq: 50
   logs_freq: 50
+  device: "cuda:3"

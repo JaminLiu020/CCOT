@@ -1,0 +1,13 @@
+optuna:
+  n_iters_per_search: 1000
+  num_searchs: 50
+  eval_freq: 1
+  alpha:
+    min: 0.01
+    max: 1.0
+#  beta:
+#    min: 0.0
+#    max: 10.0
+#  sigma:
+#    min: 1.0e-05
+#    max: 1000000

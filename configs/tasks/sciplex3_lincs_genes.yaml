@@ -1,0 +1,43 @@
+data:
+#  type: cell
+#  source: control
+#  condition: drug
+  path: datasets/chemCPA/sciplex_complete_lincs_genes_v3.h5ad
+#  path: datasets/chemCPA/sciplex_complete_middle_subset_lincs_genes_v3.h5ad
+#  path: datasets/chemCPA/sciplex_complete_middle_subset_v2.h5ad
+#  drug_list:
+#    - control
+#    - Givinostat
+#    - Dacinostat
+#    - Belinostat
+#    - Quisinostat
+#    - Hesperadin
+#    - Alvespimycin
+#    - Tanespimycin
+#    - TAK-901
+#    - Flavopiridol
+
+datasplit:
+  split_key: split_ood_finetuning     #split_random, split_ood_finetuning
+  align_by_cell_type: True
+#    groupby: drug
+#    name: train_test
+#    test_size: 0.2
+#    random_state: 0
+
+
+dataloader:
+    batch_size: 128
+#    shuffle: true
+
+model:
+    embedding:
+        type: smiles          # option: smiles, cell_type, value, smiles_onehot
+        path: embeddings/rdkit2D_embedding_lincs_trapnell_chemCPA.parquet
+        factor: 10000.0
+#        dosers_width: 64      # default: 64
+#        dosers_depth: 3       # default: 3
+#        embedding_encoder_width: 64    # default: 128
+#        embedding_encoder_depth: 1      # default: 4
+        dim: 32 # embedding dimension
+

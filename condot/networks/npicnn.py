@@ -205,7 +205,7 @@ class NPICNN(nn.Module):
         (output,) = autograd.grad(
             self.forward(x, y),
             x,
-            create_graph=True,
+            create_graph=False,
             only_inputs=True,
             grad_outputs=torch.ones((x.size()[0], 1), device=x.device).float(),
         )

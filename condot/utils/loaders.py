@@ -16,7 +16,7 @@ def load_data(config, **kwargs):
     return loadfxn(config, **kwargs)
 
 
-def load_model(config, restore=None, loader=None, **kwargs):
+def load_model(config, restore=None, labels=None, loader=None, device='cuda:0', **kwargs):
     name = config.get("model.name", "condot")
     if name == "condot":
         loadfxn = condot.models.load_condot_model
@@ -27,7 +27,7 @@ def load_model(config, restore=None, loader=None, **kwargs):
     else:
         raise ValueError
 
-    return loadfxn(config, restore=restore, loader=loader, **kwargs)
+    return loadfxn(config, restore=restore, labels=labels, loader=loader, device=device, **kwargs)
 
 
 def load(config, restore=None, include_model_kwargs=False, **kwargs):
