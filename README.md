@@ -122,6 +122,50 @@ bash scripts/runs/eval_beta_sweep.sh
 └── README.md
 ```
 
+## 对比实验 (Comparison Experiments)
+
+本仓库包含两个对比实验目录，用于在相同的数据划分和评估标准下与 baseline 方法进行公平对比。
+
+### Biolord (`biolord_reproducibility/`)
+
+在 CCOT 的 condot-aligned 划分下复现 Biolord 的 sciplex3 实验。
+
+```bash
+conda create -n biolord python=3.10 -y
+conda activate biolord
+cd biolord_reproducibility
+pip install -r requirements.txt
+jupyter notebook preprocess.ipynb   # 数据预处理
+jupyter notebook run_biolord.ipynb  # 训练 + 评估
+```
+
+### PerturbNet (`PerturbNet/`)
+
+在 CCOT 的 condot-aligned 划分下复现 PerturbNet 的 sciplex3 实验。
+
+```bash
+conda create -n PerturbNet python=3.7 -y
+conda activate PerturbNet
+cd PerturbNet
+pip install -r requirements.txt
+pip install -e .
+jupyter notebook run_perturbnet.ipynb  # 训练 + 评估
+```
+
+### 环境说明
+
+由于依赖版本不兼容，三个项目需要各自的 conda 环境：
+
+| 项目 | conda 环境 | Python | PyTorch |
+|------|-----------|--------|---------|
+| CCOT | `ccot` | 3.9.7 | 2.0.1 |
+| Biolord | `biolord` | 3.10 | 2.0.1 |
+| PerturbNet | `PerturbNet` | 3.7 | 1.13.1 |
+
+**重要：** 三个环境的 `matplotlib` 必须统一为 `3.7.2`，否则图形大小比例会有差异，不便直接对比。
+
+详细说明请参考各子目录的 README。
+
 ## 补充说明 (Notes)
 
 - `scripts/train.py` 和 `scripts/eval.py` 都通过 `--config` 与 `--config.xxx.yyy` 的形式读取和覆盖配置。
