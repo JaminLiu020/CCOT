@@ -1,0 +1,35 @@
+# OS / editor
+**/.DS_Store
+**/.ipynb_checkpoints/
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Generated experiment outputs
+**/results/
+**/old_result/
+**/logs/
+**/tmp/
+
+# Large generated assets
+embeddings/*.parquet
+pretrained_model/**/*.pt
+pretrained_model/**/*.pth
+pretrained_model/**/*.npy
+
+# Optional local checkpoints
+**/checkpoints/
+**/wandb/
+
+# Common temporary artifacts
+*.log
+*.tmp
+*.bak
+*.swp
+*.pyc
+*.__pycache__

@@ -33,7 +33,8 @@ conda create -n ccot python=3.9.7
 conda activate ccot
 pip install -r requirements.txt
 
-# 可选：以 editable 模式安装仓库
+# 可选：以 editable 模式安装（将 ccot/condot/chemCPA 注册为可导入包，
+# 方便开发时修改代码而无需重复安装）
 pip install -e .
 ```
 
@@ -111,14 +112,18 @@ bash scripts/runs/eval_beta_sweep.sh
 
 ```text
 .
-├── ccot/             # CCOT 相关评估、损失函数与辅助工具
-├── condot/           # OT 模型、训练逻辑与数据处理
-├── chemCPA/          # chemCPA 相关模块
-├── configs/          # 训练、任务、投影与实验配置
-├── scripts/          # 训练、评估、分析与批量运行脚本
-├── datasets/         # 参考数据与数据划分文件
-├── inference_kits/   # 独立推理工具包
-├── notebooks/        # 实验 notebook 与部分资源
+├── assets/                    # 架构图与论文模板
+├── ccot/                      # CCOT 相关评估、损失函数与辅助工具
+├── chemCPA/                   # chemCPA 相关模块
+├── condot/                    # OT 模型、训练逻辑与数据处理
+├── configs/                   # 训练、任务、投影与实验配置
+├── datasets/                  # 参考数据与数据划分文件
+├── embeddings/                # 预训练药物嵌入文件
+├── inference_kits/            # 独立推理工具包
+├── notebooks/                 # 实验 notebook 与部分资源
+├── scripts/                   # 训练、评估、分析与批量运行脚本
+├── biolord_reproducibility/   # Biolord 对比实验
+├── PerturbNet/                # PerturbNet 对比实验
 └── README.md
 ```
 
@@ -169,5 +174,7 @@ jupyter notebook run_perturbnet.ipynb  # 训练 + 评估
 ## 补充说明 (Notes)
 
 - `scripts/train.py` 和 `scripts/eval.py` 都通过 `--config` 与 `--config.xxx.yyy` 的形式读取和覆盖配置。
-- `inference_kits/` 用于存放与训练主流程解耦的推理工具，不是根 README 的主要使用入口。
+- `inference_kits/` 包含两个与训练主流程解耦的独立推理工具包：
+  - `ccot_inference_kit/`：CCOT 预训练模型的轻量推理封装，无 condot 依赖，可跨项目复制使用
+  - `chemCPA_inference_kit/`：chemCPA 预训练模型的推理封装，支持通过 drug_idx / SMILES 进行药物响应预测
 - 如需核对方法定义与实验设定，请以 `assets/template.tex` 中的论文原文为准。

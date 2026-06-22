@@ -3,6 +3,11 @@
 .idea/
 .vscode/
 
+# AI tool configurations
+.agents/
+.claude/
+.codex/
+
 # environments
 .env
 .envrc
@@ -46,11 +51,22 @@ MANIFEST
 logs/
 results/
 tmp/
+*.log
 tmp_*/
 embeddings/
 datasets/chemCPA
 datasets/condot
 old_result
+
+# Comparison experiment generated outputs
+biolord_reproducibility/data/
+biolord_reproducibility/figures/
+biolord_reproducibility/results/
+PerturbNet/notebooks/GATA1_prediction_analysis.ipynb
+PerturbNet/notebooks/Integrated_gradients_example.ipynb
+PerturbNet/notebooks/Tutorial_PerturbNet_Chemicals.ipynb
+PerturbNet/notebooks/Tutorial_PerturbNet_Genetic.ipynb
+PerturbNet/notebooks/Tutorial_PerturbNet_coding_variants.ipynb
 notebooks/classifier/
 notebooks/evaluate_chemCPA/artifacts/
 scripts/visualization_results/
