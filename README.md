@@ -1,54 +1,61 @@
 # CCOT: Condition-Controlled Optimal Transport
 
-<p align="center"><img src="assets/CCOT_CN.drawio.svg" alt="CCOT 架构图" width="100%"></p>
+<p align="center"><img src="assets/CCOT.svg" alt="CCOT architecture overview" width="100%"></p>
 
-## 项目简介 (Project Introduction)
+<p align="center">
+  <strong>English</strong> | <a href="README_CN.md">中文</a>
+</p>
 
-CCOT 对应论文 *Condition-Controlled Optimal Transport for Cellular Perturbation Response Prediction*，面向单细胞扰动响应预测任务。该任务的核心难点在于：scRNA-seq 数据通常无法获得扰动前后的配对细胞，因此模型需要学习从未扰动细胞分布到扰动后细胞分布的映射，同时还要具备对新药物的泛化能力。CCOT 基于最优传输框架，在同一模型中统一了 conditional transport 和 unconditional transport，用于预测未观测扰动条件下的细胞状态变化。
+---
 
-本仓库是论文配套研究代码，基于 `CondOT` 与 `chemCPA` 的部分实现和实验流程扩展而来，并补充了 CCOT 的训练、评估、分析脚本与推理工具。
+## Project Introduction
 
-## 方法要点 (Highlights)
+CCOT is the companion code for the paper *Condition-Controlled Optimal Transport for Cellular Perturbation Response Prediction*, targeting the task of single-cell perturbation response prediction. A key challenge in this setting is that scRNA-seq data rarely provides paired cells before and after perturbation, so the model must learn a mapping from unperturbed to perturbed cell distributions while also generalizing to unseen drugs. Built on an optimal transport framework, CCOT unifies conditional and unconditional transport within a single model to predict cell state changes under unobserved perturbations.
 
-- **Condition-Controlled mechanism**: 用可调参数控制 conditional transport 与 unconditional transport 的组合强度。
-- **Cross-Drug Generalization**: 利用基于 SMILES 的预训练药物表示，支持对未见药物的响应预测。
-- **Integration of Biological Priors**: 将扰动条件编码与细胞类型对齐纳入建模过程，提升生物学合理性。
+This repository extends implementations and experimental pipelines from `CondOT` and `chemCPA`, and adds training, evaluation, and analysis scripts along with inference utilities specific to CCOT.
 
-## 架构说明 (Overview)
+## Highlights
 
-上方架构图展示了 CCOT 的主要组件；更完整的方法描述可参考 `assets/template.tex`。
+- **Condition-Controlled mechanism**: A tunable parameter controls the balance between conditional and unconditional transport.
+- **Cross-Drug Generalization**: SMILES-based pretrained drug representations enable response prediction for unseen compounds.
+- **Integration of Biological Priors**: Perturbation condition encoding and cell-type alignment are incorporated into the modeling process for improved biological plausibility.
 
-## 环境要求 (Requirements)
+## Overview
+
+The diagram above illustrates the main components of CCOT; a more detailed method description can be found in `assets/template.tex`.
+
+## Requirements
 
 - Python 3.9.7
 - PyTorch 2.0.1
 - JAX 0.4.13 / OTT-JAX 0.4.2
 - Scanpy 1.9.3
-- 训练建议使用支持 CUDA 的 GPU
+- A CUDA-capable GPU is recommended for training
 
-## 安装 (Installation)
+## Installation
 
 ```bash
 conda create -n ccot python=3.9.7
 conda activate ccot
 pip install -r requirements.txt
 
-# 可选：以 editable 模式安装（将 ccot/condot/chemCPA 注册为可导入包，
-# 方便开发时修改代码而无需重复安装）
+# Optional: Install in editable mode so that ccot, condot,
+# and chemCPA are registered as importable packages,
+# allowing code changes to take effect without reinstallation.
 pip install -e .
 ```
 
-## 数据与依赖资源 (Data and Resources)
+## Data and Resources
 
-仓库包含配置文件、参考 CSV 和部分模型资源，但默认训练 / 评估配置依赖额外准备好的 SciPlex3 数据、药物 embedding，以及配置中引用的权重文件。按仓库中的批量训练脚本，默认任务配置是 `configs/tasks/sciplex3_lincs_genes.yaml`，其数据路径指向 `datasets/chemCPA/sciplex_complete_lincs_genes_v3.h5ad`；这些大文件不随仓库完整跟踪。
+The repository includes configuration files, reference CSVs, and some model assets, but the default training and evaluation configurations depend on externally prepared SciPlex3 data, drug embeddings, and checkpoint files referenced in the configs. Following the batch training scripts shipped in this repo, the default task configuration is `configs/tasks/sciplex3_lincs_genes.yaml`, whose data path points to `datasets/chemCPA/sciplex_complete_lincs_genes_v3.h5ad`; these large files are not fully tracked in the repository.
 
-仓库中已保留的小型参考文件主要位于 `datasets/reference/smiles/`，分类器相关权重位于 `notebooks/classifier/`。
+Smaller reference files are kept under `datasets/reference/smiles/`, and classifier-related weights are located in `notebooks/classifier/`.
 
-## 快速开始 (Quick Start)
+## Quick Start
 
-### 训练
+### Training
 
-下面的示例按照仓库现有 shell 脚本的默认训练组合给出：
+The examples below follow the default training combinations used by the shell scripts in the repository:
 
 ```bash
 python scripts/train.py \
@@ -64,7 +71,7 @@ python scripts/train.py \
   --config.training.device cuda:0
 ```
 
-如果需要调整 condition-controlled 机制中的 `beta`，可通过真实配置项覆盖，例如：
+To adjust the `beta` parameter in the condition-controlled mechanism, override the corresponding config entry:
 
 ```bash
 python scripts/train.py \
@@ -80,9 +87,9 @@ python scripts/train.py \
   --config.training.device cuda:0
 ```
 
-### 评估
+### Evaluation
 
-训练完成后，可直接复用输出目录中的 `config.yaml` 进行评估：
+After training, reuse the `config.yaml` saved in the output directory for evaluation:
 
 ```bash
 python scripts/eval.py \
@@ -91,62 +98,62 @@ python scripts/eval.py \
   --config.training.device cuda:0
 ```
 
-### 批量脚本
+### Batch Scripts
 
-批量训练、beta 扫描和批量评估脚本位于 `scripts/runs/`，例如：
+Batch training, beta sweep, and batch evaluation scripts are located in `scripts/runs/`, for example:
 
 ```bash
 bash scripts/runs/train_beta_sweep.sh
 bash scripts/runs/eval_beta_sweep.sh
 ```
 
-其中 `train_beta_sweep.sh` 默认使用：
+`train_beta_sweep.sh` uses the following defaults:
 
 - `./configs/condot.yaml`
 - `./configs/tasks/sciplex3_lincs_genes.yaml`
 - `embeddings/rdkit2D_embedding_lincs_trapnell_chemCPA.parquet`
 
-`configs/experiments/val.yaml` 与 `configs/projections/pca.yaml` 并不是这组 shell 脚本默认训练流程的一部分。
+Note that `configs/experiments/val.yaml` and `configs/projections/pca.yaml` are not part of the default training pipeline invoked by these shell scripts.
 
-## 目录结构 (Directory Structure)
+## Directory Structure
 
 ```text
 .
-├── assets/                    # 架构图与论文模板
-├── ccot/                      # CCOT 相关评估、损失函数与辅助工具
-├── chemCPA/                   # chemCPA 相关模块
-├── condot/                    # OT 模型、训练逻辑与数据处理
-├── configs/                   # 训练、任务、投影与实验配置
-├── datasets/                  # 参考数据与数据划分文件
-├── embeddings/                # 预训练药物嵌入文件
-├── inference_kits/            # 独立推理工具包
-├── notebooks/                 # 实验 notebook 与部分资源
-├── scripts/                   # 训练、评估、分析与批量运行脚本
-├── biolord_reproducibility/   # Biolord 对比实验
-├── PerturbNet/                # PerturbNet 对比实验
+├── assets/                    # Architecture diagrams and paper draft
+├── ccot/                      # CCOT evaluation, loss functions, and utilities
+├── chemCPA/                   # chemCPA-related modules
+├── condot/                    # OT models, training logic, and data processing
+├── configs/                   # Training, task, projection, and experiment configs
+├── datasets/                  # Reference data and data split files
+├── embeddings/                # Pretrained drug embedding files
+├── inference_kits/            # Standalone inference toolkits
+├── notebooks/                 # Experiment notebooks and resources
+├── scripts/                   # Training, evaluation, analysis, and batch scripts
+├── biolord_reproducibility/   # Biolord comparison experiments
+├── PerturbNet/                # PerturbNet comparison experiments
 └── README.md
 ```
 
-## 对比实验 (Comparison Experiments)
+## Comparison Experiments
 
-本仓库包含两个对比实验目录，用于在相同的数据划分和评估标准下与 baseline 方法进行公平对比。
+This repository includes two directories for fair comparison with baseline methods under identical data splits and evaluation protocols.
 
 ### Biolord (`biolord_reproducibility/`)
 
-在 CCOT 的 condot-aligned 划分下复现 Biolord 的 sciplex3 实验。
+Reproduce Biolord's sciplex3 experiments under CCOT's condot-aligned split.
 
 ```bash
 conda create -n biolord python=3.10 -y
 conda activate biolord
 cd biolord_reproducibility
 pip install -r requirements.txt
-jupyter notebook preprocess.ipynb   # 数据预处理
-jupyter notebook run_biolord.ipynb  # 训练 + 评估
+jupyter notebook preprocess.ipynb   # Data preprocessing
+jupyter notebook run_biolord.ipynb  # Training + evaluation
 ```
 
 ### PerturbNet (`PerturbNet/`)
 
-在 CCOT 的 condot-aligned 划分下复现 PerturbNet 的 sciplex3 实验。
+Reproduce PerturbNet's sciplex3 experiments under CCOT's condot-aligned split.
 
 ```bash
 conda create -n PerturbNet python=3.7 -y
@@ -154,27 +161,27 @@ conda activate PerturbNet
 cd PerturbNet
 pip install -r requirements.txt
 pip install -e .
-jupyter notebook run_perturbnet.ipynb  # 训练 + 评估
+jupyter notebook run_perturbnet.ipynb  # Training + evaluation
 ```
 
-### 环境说明
+### Environment Notes
 
-由于依赖版本不兼容，三个项目需要各自的 conda 环境：
+Due to incompatible dependency versions, the three projects require separate conda environments:
 
-| 项目 | conda 环境 | Python | PyTorch |
-|------|-----------|--------|---------|
+| Project | conda env | Python | PyTorch |
+|---------|-----------|--------|---------|
 | CCOT | `ccot` | 3.9.7 | 2.0.1 |
 | Biolord | `biolord` | 3.10 | 2.0.1 |
 | PerturbNet | `PerturbNet` | 3.7 | 1.13.1 |
 
-**重要：** 三个环境的 `matplotlib` 必须统一为 `3.7.2`，否则图形大小比例会有差异，不便直接对比。
+**Important:** `matplotlib` must be pinned to `3.7.2` across all three environments; otherwise, figure dimensions will differ and visual comparisons will be misleading.
 
-详细说明请参考各子目录的 README。
+See the README in each subdirectory for further details.
 
-## 补充说明 (Notes)
+## Notes
 
-- `scripts/train.py` 和 `scripts/eval.py` 都通过 `--config` 与 `--config.xxx.yyy` 的形式读取和覆盖配置。
-- `inference_kits/` 包含两个与训练主流程解耦的独立推理工具包：
-  - `ccot_inference_kit/`：CCOT 预训练模型的轻量推理封装，无 condot 依赖，可跨项目复制使用
-  - `chemCPA_inference_kit/`：chemCPA 预训练模型的推理封装，支持通过 drug_idx / SMILES 进行药物响应预测
-- 如需核对方法定义与实验设定，请以 `assets/template.tex` 中的论文原文为准。
+- Both `scripts/train.py` and `scripts/eval.py` read and override configuration via `--config` and `--config.xxx.yyy` flags.
+- `inference_kits/` contains two standalone inference toolkits decoupled from the main training pipeline:
+  - `ccot_inference_kit/`: A lightweight inference wrapper for CCOT pretrained models, with no condot dependency, designed to be portable across projects.
+  - `chemCPA_inference_kit/`: An inference wrapper for chemCPA pretrained models, supporting drug response prediction via `drug_idx` or SMILES.
+- For precise method definitions and experimental settings, refer to the paper draft in `assets/template.tex`.
